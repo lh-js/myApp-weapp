@@ -1,5 +1,5 @@
 export default defineAppConfig({
-  pages: ["pages/mine/index", "pages/index/index"],
+  pages: ["pages/index/index", "pages/addSchedule/index", "pages/mine/index"],
   window: {
     backgroundTextStyle: "light",
     navigationBarBackgroundColor: "#fff",

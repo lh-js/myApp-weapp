@@ -4,7 +4,7 @@ import "./index.scss";
 import Taro from "@tarojs/taro";
 import { AtButton, AtAvatar, AtIcon } from "taro-ui";
 import { useStore } from "../../store/store";
-
+import { loginAPI } from "../../service/api";
 export default () => {
   const [userInfo, setUserInfo] = useStore();
   useEffect(() => {
@@ -15,25 +15,16 @@ export default () => {
       success: function(res) {
         if (res.code) {
           //发起网络请求
-          Taro.request({
-            url: "https://192.168.124.5/springboot/user/login",
-            method: "POST",
-            data: {
-              avatar: avatar,
-              code: res.code,
-              username: username
-            },
-            success: res => {
-              console.log(res);
-              Taro.setStorage({
-                key: "token",
-                data: res.data.data.token
-              });
-              setUserInfo(res.data.data);
-            },
-            fail: err => {
-              console.log(err);
-            }
+          loginAPI({
+            avatar: avatar,
+            code: res.code,
+            username: username
+          }).then((res: any) => {
+            Taro.setStorage({
+              key: "token",
+              data: res?.data?.data?.token
+            });
+            setUserInfo(res?.data?.data);
           });
         } else {
           console.log("登录失败！" + res.errMsg);
@@ -53,8 +44,33 @@ export default () => {
     });
   }
 
+  function loginOut() {
+    Taro.showModal({
+      title: "提示",
+      content: "确定要退出登录吗？",
+      success: function(res) {
+        if (res.confirm) {
+          Taro.removeStorage({
+            key: "token",
+            success: function(res) {
+              console.log(res);
+              Taro.showToast({
+                title: "退出登录成功",
+                icon: "success",
+                duration: 2000
+              });
+              setUserInfo(undefined);
+            }
+          });
+        } else if (res.cancel) {
+          console.log("用户点击取消");
+        }
+      }
+    });
+  }
+
   return (
-    <View className="index">
+    <View>
       {!userInfo ? (
         <View className="login-content">
           <AtButton
@@ -72,14 +88,20 @@ export default () => {
           <View className="login-user">
             <View className="login-userinfo">
               <AtAvatar image={userInfo?.avatar}></AtAvatar>
-              <View style="color:#FFFFFF;margin-left:10px">
-                {userInfo?.username}
-              </View>
+              <View className="login-username">{userInfo?.username}</View>
             </View>
-            <AtIcon value="settings" size="20" color="#FFFFFF"></AtIcon>
+            <AtButton type="secondary" circle size="small" onClick={loginOut}>
+              退出登录
+            </AtButton>
           </View>
         </View>
       )}
+      <View className="mine-content">
+        <View className="mine-item"></View>
+        <View className="mine-item"></View>
+        <View className="mine-item"></View>
+        <View className="mine-item"></View>
+      </View>
     </View>
   );
 };

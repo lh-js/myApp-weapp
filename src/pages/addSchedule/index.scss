@@ -1,0 +1,62 @@
+.form-content {
+  width: 94%;
+  margin-top: 50px;
+
+  .form-item {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-top: 30px;
+
+    .form-item-child {
+      width: 200px;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .form-item-input {
+      border-bottom: 1px solid #c5bfbf;
+    }
+  }
+
+  .form-item-time {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 30px;
+
+    .form-item-child {
+      width: 200px;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .form-item-picker {
+      display: flex;
+    }
+
+    .form-item-textarea {
+      background: #fff;
+      width: 60%;
+      height: 200px;
+      padding: 0 30rpx;
+      border: 1px solid #c5bfbf;
+      border-radius: 10px;
+    }
+  }
+
+  .submit {
+    margin-top: 60px;
+  }
+
+  .tip-title {
+    font-size: 35px;
+    color: #c5bfbf;
+    margin-top: 20px;
+  }
+
+  .tip {
+    font-size: 30px;
+    color: #c5bfbf;
+  }
+}

@@ -1,9 +1,9 @@
 import { View, Image } from "@tarojs/components";
 import "./index.scss";
-import { AtButton } from "taro-ui";
+import { AtButton, AtIcon, AtListItem, AtSwipeAction } from "taro-ui";
 import { useEffect, useState } from "react";
 import Taro from "@tarojs/taro";
-
+import { send } from "../../service/api";
 const Index = () => {
   const bmap = require("../../utils/bmap/bmap-wx.min.js");
   var BMap = new bmap.BMapWX({
@@ -14,9 +14,9 @@ const Index = () => {
   const [weatherIcon, setWeatherIcon] = useState();
   const [weatherTemp, setWeatherTemp] = useState();
 
-  // useEffect(() => {
-  //   getAddress();
-  // }, []);
+  useEffect(() => {
+    getAddress();
+  }, []);
   function getAddress() {
     BMap.regeocoding({
       success: (res: { originalData: { result: any } }) => {
@@ -63,14 +63,67 @@ const Index = () => {
       }
     });
   }
+
+  function test() {
+    Taro.requestSubscribeMessage({
+      tmplIds: ["N0liGKV50bJRH_sMx4qnNzf-DeZxreWDgcmwry_WeYM"],
+      success: function(res) {
+        console.log(res);
+        send();
+      },
+      fail: function(err) {
+        console.log(err);
+      }
+    });
+  }
+
+  function change(date) {
+    console.log(date);
+  }
   return (
     <View className="body">
-      <View style="fontSize:30px">{address}</View>
       {weatherIcon ? (
         <Image src={require(`../../assets/icons/${weatherIcon}.svg`)} />
       ) : null}
       <View style="fontSize:40px">{weatherTemp}°C</View>
       <View>{weatherText}</View>
+      <View style="fontSize:30px">{address}</View>
+      <View className="schedule-content">
+        <View className="schedule-title">我的日程</View>
+        <View className="schedule-item">
+          <AtSwipeAction
+            autoClose
+            options={[
+              {
+                text: "删除",
+                style: {
+                  backgroundColor: "#FF4949",
+                  width: "16px"
+                }
+              }
+            ]}
+          >
+            <AtListItem
+              title="标题文字"
+              note="描述信息"
+              arrow="right"
+              extraText="详细信息"
+              iconInfo={{ size: 25, color: "#78A4FA", value: "calendar" }}
+            />
+          </AtSwipeAction>
+        </View>
+      </View>
+      <AtButton
+        type="primary"
+        className="add-schedule"
+        onClick={() => {
+          Taro.navigateTo({
+            url: "../addSchedule/index"
+          });
+        }}
+      >
+        <AtIcon value="add" size="20" color="#FFFFFF"></AtIcon>
+      </AtButton>
     </View>
   );
 };
