@@ -1,6 +1,7 @@
 import Taro from "@tarojs/taro";
 
-const baseUrl = "https://192.168.124.5";
+const baseUrl = "https://localhost";
+// const baseUrl = "https://www.lihong.org.cn";
 
 function request(url: any, method: any, header: any, data: any) {
   Taro.showLoading({
@@ -18,7 +19,7 @@ function request(url: any, method: any, header: any, data: any) {
         if (res.data.status != 200) {
           Taro.showToast({
             title: res.data.message,
-            icon: "error",
+            icon: "none",
             duration: 2000
           });
         }

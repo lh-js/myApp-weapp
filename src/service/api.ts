@@ -14,6 +14,46 @@ export const getUserInfoAPI = () =>
     null
   );
 
+export const insertScheduleAPI = (data: any) =>
+  request(
+    "/springboot/schedule/insert",
+    "POST",
+    {
+      Authorization: Taro.getStorageSync("token")
+    },
+    data
+  );
+
+export const selectByOpenId = () =>
+  request(
+    "/springboot/schedule/selectByOpenId",
+    "POST",
+    {
+      Authorization: Taro.getStorageSync("token")
+    },
+    null
+  );
+
+export const getScheduleByid = (data: any) =>
+  request(
+    "/springboot/schedule/selectById",
+    "POST",
+    {
+      Authorization: Taro.getStorageSync("token")
+    },
+    data
+  );
+
+export const updateScheduleAPI = (data: any) =>
+  request(
+    "/springboot/schedule/updateSchedule",
+    "POST",
+    {
+      Authorization: Taro.getStorageSync("token")
+    },
+    data
+  );
+
 export const send = () =>
   request(
     "/springboot/user/send",

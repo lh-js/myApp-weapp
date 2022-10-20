@@ -1,5 +1,11 @@
 export default defineAppConfig({
-  pages: ["pages/index/index", "pages/addSchedule/index", "pages/mine/index"],
+  pages: [
+    "pages/index/index",
+    "pages/websocket/index",
+
+    "pages/addSchedule/index",
+    "pages/mine/index"
+  ],
   window: {
     backgroundTextStyle: "light",
     navigationBarBackgroundColor: "#fff",

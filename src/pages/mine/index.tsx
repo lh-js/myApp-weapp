@@ -90,17 +90,16 @@ export default () => {
               <AtAvatar image={userInfo?.avatar}></AtAvatar>
               <View className="login-username">{userInfo?.username}</View>
             </View>
-            <AtButton type="secondary" circle size="small" onClick={loginOut}>
-              退出登录
-            </AtButton>
+            <View>
+              <AtButton type="secondary" circle size="small" onClick={loginOut}>
+                退出登录
+              </AtButton>
+            </View>
           </View>
         </View>
       )}
       <View className="mine-content">
-        <View className="mine-item"></View>
-        <View className="mine-item"></View>
-        <View className="mine-item"></View>
-        <View className="mine-item"></View>
+        <View className="mine-item">V1.0.0</View>
       </View>
     </View>
   );

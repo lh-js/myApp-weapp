@@ -1,9 +1,10 @@
-import { View, Image } from "@tarojs/components";
+import { View, Image, CommonEvent } from "@tarojs/components";
 import "./index.scss";
 import { AtButton, AtIcon, AtListItem, AtSwipeAction } from "taro-ui";
 import { useEffect, useState } from "react";
-import Taro from "@tarojs/taro";
-import { send } from "../../service/api";
+import Taro, { usePullDownRefresh } from "@tarojs/taro";
+import { selectByOpenId, send } from "../../service/api";
+import { SwipeActionOption } from "taro-ui/types/swipe-action";
 const Index = () => {
   const bmap = require("../../utils/bmap/bmap-wx.min.js");
   var BMap = new bmap.BMapWX({
@@ -13,10 +14,24 @@ const Index = () => {
   const [weatherText, setWeatherText] = useState();
   const [weatherIcon, setWeatherIcon] = useState();
   const [weatherTemp, setWeatherTemp] = useState();
+  const [schedule, setSchedule] = useState<any[]>();
 
+  // useEffect(() => {
+  //   getAddress();
+  // }, []);
   useEffect(() => {
-    getAddress();
+    selectByOpenId().then((res: any) => {
+      setSchedule(res.data.data);
+      console.log(res.data.data);
+    });
   }, []);
+
+  usePullDownRefresh(() => {
+    selectByOpenId().then((res: any) => {
+      setSchedule(res.data.data);
+      console.log(res.data.data);
+    });
+  });
   function getAddress() {
     BMap.regeocoding({
       success: (res: { originalData: { result: any } }) => {
@@ -77,47 +92,61 @@ const Index = () => {
     });
   }
 
-  function change(date) {
-    console.log(date);
+  function toDetail(id) {
+    console.log(id);
   }
+
   return (
     <View className="body">
-      {weatherIcon ? (
+      {/* {weatherIcon ? (
         <Image src={require(`../../assets/icons/${weatherIcon}.svg`)} />
       ) : null}
       <View style="fontSize:40px">{weatherTemp}°C</View>
       <View>{weatherText}</View>
-      <View style="fontSize:30px">{address}</View>
+      <View style="fontSize:30px">{address}</View> */}
       <View className="schedule-content">
         <View className="schedule-title">我的日程</View>
-        <View className="schedule-item">
-          <AtSwipeAction
-            autoClose
-            options={[
-              {
-                text: "删除",
-                style: {
-                  backgroundColor: "#FF4949",
-                  width: "16px"
-                }
-              }
-            ]}
-          >
-            <AtListItem
-              title="标题文字"
-              note="描述信息"
-              arrow="right"
-              extraText="详细信息"
-              iconInfo={{ size: 25, color: "#78A4FA", value: "calendar" }}
-            />
-          </AtSwipeAction>
-        </View>
+        {schedule?.length != 0
+          ? schedule?.map(item => (
+              <View key={item.id} className="schedule-item">
+                <AtSwipeAction
+                  autoClose
+                  options={[
+                    {
+                      text: "删除",
+                      style: {
+                        backgroundColor: "#FF4949",
+                        width: "16px"
+                      }
+                    }
+                  ]}
+                  onClick={() => {
+                    console.log(item);
+                  }}
+                >
+                  <AtListItem
+                    title={item.remindThing}
+                    note={item.thingAddress}
+                    arrow="right"
+                    extraText="详细信息"
+                    iconInfo={{ size: 25, color: "#78A4FA", value: "calendar" }}
+                    onClick={() => {
+                      console.log(item);
+                      Taro.reLaunch({
+                        url: "../addSchedule/index?id=" + item.id
+                      });
+                    }}
+                  />
+                </AtSwipeAction>
+              </View>
+            ))
+          : "暂无日程"}
       </View>
       <AtButton
         type="primary"
         className="add-schedule"
         onClick={() => {
-          Taro.navigateTo({
+          Taro.reLaunch({
             url: "../addSchedule/index"
           });
         }}
