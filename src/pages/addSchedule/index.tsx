@@ -222,10 +222,15 @@ const AddSchedule = () => {
               };
               console.log(scheduleData);
               if (id == 0) {
-                insertScheduleAPI(scheduleData).then(() => {
-                  Taro.switchTab({
-                    url: "../index/index"
-                  });
+                Taro.requestSubscribeMessage({
+                  tmplIds: ["N0liGKV50bJRH_sMx4qnNzf-DeZxreWDgcmwry_WeYM"],
+                  success: function(res) {
+                    insertScheduleAPI(scheduleData).then(() => {
+                      Taro.switchTab({
+                        url: "../index/index"
+                      });
+                    });
+                  }
                 });
               } else {
                 updateScheduleAPI({
