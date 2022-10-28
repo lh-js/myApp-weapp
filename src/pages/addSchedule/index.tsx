@@ -28,11 +28,12 @@ const AddSchedule = () => {
   const [remindDate, setRemindDate] = useState("0000-00-00");
   const [remindTime, setRemindTime] = useState("00:00");
   const [remark, setRemark] = useState("");
-
+  const [isReadOnly, setReadOnly] = useState(false);
   useEffect(() => {
     let id = Taro.getCurrentInstance().router?.params.id;
     console.log(id);
     if (id) {
+      setReadOnly(true);
       setId(Number(id));
       getScheduleByid({
         endTime: "",
@@ -106,6 +107,7 @@ const AddSchedule = () => {
               }}
               placeholder="请输入提醒事项"
               focus
+              disabled={isReadOnly}
             />
           </View>
           <View className="form-item">
@@ -121,6 +123,7 @@ const AddSchedule = () => {
               }}
               placeholder="请输入事项地点"
               focus
+              disabled={isReadOnly}
             />
           </View>
           <View className="form-item-time">
@@ -134,6 +137,7 @@ const AddSchedule = () => {
                 onChange={(e: any) => {
                   setStartDate(e.target.value);
                 }}
+                disabled={isReadOnly}
               >
                 <AtListItem extraText={startDate} />
               </Picker>
@@ -143,6 +147,7 @@ const AddSchedule = () => {
                 onChange={(e: any) => {
                   setStartTime(e.target.value);
                 }}
+                disabled={isReadOnly}
               >
                 <AtListItem extraText={startTime} />
               </Picker>
@@ -159,6 +164,7 @@ const AddSchedule = () => {
                 onChange={(e: any) => {
                   setEndDate(e.target.value);
                 }}
+                disabled={isReadOnly}
               >
                 <AtListItem extraText={endDate} />
               </Picker>
@@ -168,13 +174,16 @@ const AddSchedule = () => {
                 onChange={(e: any) => {
                   setEndTime(e.target.value);
                 }}
+                disabled={isReadOnly}
               >
                 <AtListItem extraText={endTime} />
               </Picker>
             </View>
           </View>
           <View className="form-item-time">
-            <View className="form-item-child">提醒时间:</View>
+            <View className="form-item-child">
+              <Text style={{ color: "red" }}>*</Text>提醒时间:
+            </View>
             <View className="form-item-picker">
               <Picker
                 mode="date"
@@ -182,6 +191,7 @@ const AddSchedule = () => {
                 onChange={(e: any) => {
                   setRemindDate(e.target.value);
                 }}
+                disabled={isReadOnly}
               >
                 <AtListItem extraText={remindDate} />
               </Picker>
@@ -191,6 +201,7 @@ const AddSchedule = () => {
                 onChange={(e: any) => {
                   setRemindTime(e.target.value);
                 }}
+                disabled={isReadOnly}
               >
                 <AtListItem extraText={remindTime} />
               </Picker>
@@ -205,52 +216,65 @@ const AddSchedule = () => {
                 setRemark(e.target.value);
               }}
               autoFocus
+              disabled={isReadOnly}
             />
           </View>
-          <AtButton
-            type="primary"
-            full
-            className="submit"
-            onClick={() => {
-              let scheduleData = {
-                remindThing: remindThing,
-                thingAddress: thingAddress,
-                startTime: new Date(startDate + " " + startTime),
-                endTime: new Date(endDate + " " + endTime),
-                remindTime: new Date(remindDate + " " + remindTime),
-                remark: remark
-              };
-              console.log(scheduleData);
-              if (id == 0) {
-                Taro.requestSubscribeMessage({
-                  tmplIds: ["N0liGKV50bJRH_sMx4qnNzf-DeZxreWDgcmwry_WeYM"],
-                  success: function(res) {
-                    insertScheduleAPI(scheduleData).then(() => {
-                      Taro.switchTab({
-                        url: "../index/index"
-                      });
-                    });
-                  }
-                });
-              } else {
-                updateScheduleAPI({
-                  id: id,
+          {isReadOnly ? null : (
+            <AtButton
+              type="primary"
+              full
+              className="submit"
+              onClick={() => {
+                let scheduleData = {
                   remindThing: remindThing,
                   thingAddress: thingAddress,
-                  startTime: new Date(startDate + " " + startTime),
-                  endTime: new Date(endDate + " " + endTime),
-                  remindTime: new Date(remindDate + " " + remindTime),
+                  startTime: new Date(
+                    startDate.replace(/-/g, "/") + " " + startTime
+                  ),
+                  endTime: new Date(endDate.replace(/-/g, "/") + " " + endTime),
+                  remindTime: new Date(
+                    remindDate.replace(/-/g, "/") + " " + remindTime
+                  ),
                   remark: remark
-                }).then(() => {
-                  Taro.switchTab({
-                    url: "../index/index"
+                };
+                console.log(scheduleData);
+                if (id == 0) {
+                  Taro.requestSubscribeMessage({
+                    tmplIds: ["N0liGKV50bJRH_sMx4qnNzf-DeZxreWDgcmwry_WeYM"],
+                    success: function(res) {
+                      insertScheduleAPI(scheduleData).then(() => {
+                        Taro.switchTab({
+                          url: "../index/index"
+                        });
+                      });
+                    }
                   });
-                });
-              }
-            }}
-          >
-            提交
-          </AtButton>
+                } else {
+                  updateScheduleAPI({
+                    id: id,
+                    remindThing: remindThing,
+                    thingAddress: thingAddress,
+                    startTime: new Date(
+                      startDate.replace(/-/g, "/") + " " + startTime
+                    ),
+                    endTime: new Date(
+                      endDate.replace(/-/g, "/") + " " + endTime
+                    ),
+                    remindTime: new Date(
+                      remindDate.replace(/-/g, "/") + " " + remindTime
+                    ),
+                    remark: remark
+                  }).then(() => {
+                    Taro.switchTab({
+                      url: "../index/index"
+                    });
+                  });
+                }
+              }}
+            >
+              提交
+            </AtButton>
+          )}
         </Form>
         <View className="tip-title">注：</View>
         <View className="tip">1.提交之后选择订阅本小程序才能获得微信提醒</View>

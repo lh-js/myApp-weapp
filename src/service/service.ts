@@ -20,8 +20,9 @@ function request(url: any, method: any, header: any, data: any) {
           Taro.showToast({
             title: res.data.message,
             icon: "none",
-            duration: 2000
+            duration: 5000
           });
+          return;
         }
         reslove(res);
       },

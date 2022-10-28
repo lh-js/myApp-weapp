@@ -54,12 +54,12 @@ export const updateScheduleAPI = (data: any) =>
     data
   );
 
-export const send = () =>
+export const deteleScheduleAPI = (data: any) =>
   request(
-    "/springboot/user/send",
+    "/springboot/schedule/deleteSchedule",
     "POST",
     {
       Authorization: Taro.getStorageSync("token")
     },
-    null
+    data
   );

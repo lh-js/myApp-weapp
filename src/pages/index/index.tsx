@@ -3,7 +3,7 @@ import "./index.scss";
 import { AtButton, AtIcon, AtListItem, AtSwipeAction } from "taro-ui";
 import { useEffect, useState } from "react";
 import Taro, { usePullDownRefresh } from "@tarojs/taro";
-import { selectByOpenId, send } from "../../service/api";
+import { deteleScheduleAPI, selectByOpenId } from "../../service/api";
 import { SwipeActionOption } from "taro-ui/types/swipe-action";
 const Index = () => {
   const bmap = require("../../utils/bmap/bmap-wx.min.js");
@@ -15,6 +15,7 @@ const Index = () => {
   const [weatherIcon, setWeatherIcon] = useState();
   const [weatherTemp, setWeatherTemp] = useState();
   const [schedule, setSchedule] = useState<any[]>();
+  const [openIndex, setOpenIndex] = useState(-1);
 
   // useEffect(() => {
   //   getAddress();
@@ -79,23 +80,6 @@ const Index = () => {
     });
   }
 
-  function test() {
-    Taro.requestSubscribeMessage({
-      tmplIds: ["N0liGKV50bJRH_sMx4qnNzf-DeZxreWDgcmwry_WeYM"],
-      success: function(res) {
-        console.log(res);
-        send();
-      },
-      fail: function(err) {
-        console.log(err);
-      }
-    });
-  }
-
-  function toDetail(id) {
-    console.log(id);
-  }
-
   return (
     <View className="body">
       {/* {weatherIcon ? (
@@ -107,7 +91,7 @@ const Index = () => {
       <View className="schedule-content">
         <View className="schedule-title">我的日程</View>
         {schedule?.length != 0
-          ? schedule?.map(item => (
+          ? schedule?.map((item, index) => (
               <View key={item.id} className="schedule-item">
                 <AtSwipeAction
                   autoClose
@@ -122,7 +106,17 @@ const Index = () => {
                   ]}
                   onClick={() => {
                     console.log(item);
+                    deteleScheduleAPI(item).then(res => {
+                      selectByOpenId().then((res: any) => {
+                        setSchedule(res.data.data);
+                        console.log(res.data.data);
+                      });
+                    });
                   }}
+                  // onOpened={() => {
+                  //   setOpenIndex(index);
+                  // }}
+                  // isOpened={index == openIndex}
                 >
                   <AtListItem
                     title={item.remindThing}
